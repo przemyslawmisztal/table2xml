@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# first we have to read file name passed as first argument
+# first we have to read name of the file passed as first argument
 create_script_file = ''
 
 ARGV.each do |a|
@@ -12,4 +12,9 @@ unless File.file?(create_script_file)
   abort("File #{create_script_file} doesn't exists in current directory")
 end
 
-puts "yep it worked"
+# now we have to read contents of the file
+file = File.open(create_script_file)
+contents = file.read
+
+# don't forget to close
+file.close
