@@ -30,6 +30,7 @@ table_name = contents[/.*CREATE TABLE \[dbo\].\[([^\]]*)/, 1]
 # and now we are after fields and data types
 # removing not needed part of the script
 contents = contents.split(/.*CREATE TABLE \[dbo\].\[/)[1]
+contents = contents.split(/CONSTRAINT/)[0]
 
 # and extracting what we need
 fields_table = contents.scan(/(?<=\[).*?(?=\])/)
@@ -62,7 +63,7 @@ BEGIN
   SELECT (
     SELECT
       #{output_lines_array.join(",\n      ")}
-    FROM [dbo].[#{table_name}]
+    FROM [dbo].[#{table_name}] #{table_name}
     FOR XML AUTO, ELEMENTS, TYPE
   ) .query ('for $i in /#{table_name} return <DataArea>{$i}</DataArea>')
 end"
