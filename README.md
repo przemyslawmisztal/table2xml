@@ -17,7 +17,7 @@ Simple tool that makes selecting data from MSSQL table into XML a little bit eas
 - Execute program `ruby table2xml.rb file_name`
 - Two files will be created
   - ION_TABLE_2_XML containing selection of data into XML
-  - ION_XML_2_TABLE containing extracting of XML into temporary table
+  - ION_XML_2_TABLE that selects data out of XML into temporary table
 
 ## Compatibility
 
