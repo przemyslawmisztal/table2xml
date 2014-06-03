@@ -32,4 +32,21 @@ table_name = puts contents[/.*CREATE TABLE \[dbo\].\[([^\]]*)/, 1]
 contents = contents.split(/.*CREATE TABLE \[dbo\].\[/)[1]
 
 # and extracting what we need
-puts contents.scan(/(?<=\[).*?(?=\])/)
+fields_table = contents.scan(/(?<=\[).*?(?=\])/)
+
+# create dictionary of those extracted fields
+$i = 0
+field_name = nil
+field_data_type = nil
+
+# going to loop over extracted fields, they always come in pairs that's why +2 iterator incrementation
+while $i == 0 || field_data_type != nil do
+  field_name = fields_table[$i]
+  field_data_type = fields_table[$i + 1]
+  
+  # display only for testing purposes
+  puts field_name + "," + field_data_type if field_data_type != nil
+  
+  # let's get another pair
+  $i+=2
+end
