@@ -27,7 +27,7 @@ end
 # grab table name
 table_name = contents[/.*CREATE TABLE \[dbo\].\[([^\]]*)/, 1]
 
-# and now we need fields and data types
+# and now we are after fields and data types
 # removing not needed part of the script
 contents = contents.split(/.*CREATE TABLE \[dbo\].\[/)[1]
 
@@ -36,17 +36,11 @@ fields_table = contents.scan(/(?<=\[).*?(?=\])/)
 
 # create dictionary of those extracted fields
 $i = 0
-field_name = nil
-field_data_type = nil
-
+output_lines_array = Array.new
 # going to loop over extracted fields, they always come in pairs that's why +2 iterator incrementation
-while $i == 0 || field_data_type != nil do
-  field_name = fields_table[$i]
-  field_data_type = fields_table[$i + 1]
-  
-  # display only for testing purposes
-  puts field_name + "," + field_data_type if field_data_type != nil
-  
+while $i == 0 || fields_table[$i + 1] != nil do
+  output_lines_array.push("#{table_name}.#{fields_table[$i]} as '#{fields_table[$i]}'") if fields_table[$i + 1] != nil
+ 
   # let's get another pair
   $i+=2
 end
@@ -60,6 +54,15 @@ GO
 
 CREATE PROCEDURE [dbo].[#{table_name}_2_XML]
 AS
-BEGIN"
+BEGIN
+  SET NOCOUNT ON;
+  
+  SELECT (
+    SELECT
+      #{output_lines_array.join(",\n      ")}
+    FROM [dbo].[#{table_name}]
+    FOR XML AUTO, ELEMENTS, TYPE
+  ) .query ('for $i in /#{table_name} return <DataArea>{$i}</DataArea>')
+end"
 
 puts output_header
