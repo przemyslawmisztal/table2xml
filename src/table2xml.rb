@@ -9,7 +9,7 @@ end
 
 # let's see if that file exists and abort if doesn't
 unless File.file?(create_script_file)
-  abort("File #{create_script_file} doesn't exists in current directory")
+  abort("ABORT: File #{create_script_file} doesn't exists in current directory")
 end
 
 # now we have to read contents of the file
@@ -18,3 +18,8 @@ contents = file.read
 
 # don't forget to close
 file.close
+
+# let's see if it is indeed create table script and abort if not
+unless contents.include? "CREATE TABLE"
+  abort("ABORT: Provided content doesn't look like a CREATE TABLE script")
+end
