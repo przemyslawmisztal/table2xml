@@ -65,4 +65,9 @@ BEGIN
   ) .query ('for $i in /#{table_name} return <DataArea>{$i}</DataArea>')
 end"
 
-puts output_header
+# writing files
+File.open("#{table_name}_2_XML.sql", 'w') { |file| file.write(output_header) }
+
+# test output files
+file = File.open("#{table_name}_2_XML.sql")
+puts file.read
