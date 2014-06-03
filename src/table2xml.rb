@@ -37,15 +37,17 @@ fields_table = contents.scan(/(?<=\[).*?(?=\])/)
 # create dictionary of those extracted fields
 $i = 0
 output_lines_array = Array.new
+input_lines_array = Array.new
 # going to loop over extracted fields, they always come in pairs that's why +2 iterator incrementation
 while $i == 0 || fields_table[$i + 1] != nil do
   output_lines_array.push("#{table_name}.#{fields_table[$i]} as '#{fields_table[$i]}'") if fields_table[$i + 1] != nil
+  input_lines_array.push("#{table_name}.value('(#{fields_table[$i]})[1]', '#{fields_table[$i + 1]}') as '#{fields_table[$i]}'") if fields_table[$i + 1] != nil
  
   # let's get another pair
   $i+=2
 end
 
-# template for stored procedure with output xml
+# template for output stored procedure
 output_header = 
 "SET ANSI_NULLS ON
 GO
@@ -65,9 +67,39 @@ BEGIN
   ) .query ('for $i in /#{table_name} return <DataArea>{$i}</DataArea>')
 end"
 
-# writing files
-File.open("#{table_name}_2_XML.sql", 'w') { |file| file.write(output_header) }
+# template for input stored procedure
+input_header = 
+"SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
+CREATE PROCEDURE [dbo].[#{table_name}_2_XML]
+  @xmlData xml
+AS
+BEGIN
+  SET NOCOUNT ON;
+  
+  ;WITH GRABXML AS (
+    SELECT
+    #{input_lines_array.join(",\n      ")}
+    FROM @xmlData.nodes('DataArea/#{table_name}') as n(#{table_name})
+  )
+  SELECT * INTO ##{table_name} FROM GRABXML
+END  
+"
+
+# writing files
+File.open("ION_#{table_name}_2_XML.sql", 'w') { |file| file.write(output_header) }
+File.open("ION_XML_2_#{table_name}.sql", 'w') { |file| file.write(input_header) }
+
+=begin
 # test output files
 file = File.open("#{table_name}_2_XML.sql")
 puts file.read
+file.close
+
+file = File.open("XML_2_#{table_name}.sql")
+puts file.read
+file.close
+=end
