@@ -26,3 +26,10 @@ end
 
 # grab table name
 table_name = puts contents[/.*CREATE TABLE \[dbo\].\[([^\]]*)/, 1]
+
+# and now we need fields and data types
+# removing not needed part of the script
+contents = contents.split(/.*CREATE TABLE \[dbo\].\[/)[1]
+
+# and extracting what we need
+puts contents.scan(/(?<=\[).*?(?=\])/)
