@@ -19,7 +19,10 @@ contents = file.read
 # don't forget to close
 file.close
 
-# let's see if it is indeed create table script and abort if not
+# check if it is indeed create table script and abort if not
 unless contents.include? "CREATE TABLE"
   abort("ABORT: Provided content doesn't look like a CREATE TABLE script")
 end
+
+# grab table name
+table_name = puts contents[/.*CREATE TABLE \[dbo\].\[([^\]]*)/, 1]
