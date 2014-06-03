@@ -25,7 +25,7 @@ unless contents.include? "CREATE TABLE"
 end
 
 # grab table name
-table_name = puts contents[/.*CREATE TABLE \[dbo\].\[([^\]]*)/, 1]
+table_name = contents[/.*CREATE TABLE \[dbo\].\[([^\]]*)/, 1]
 
 # and now we need fields and data types
 # removing not needed part of the script
@@ -50,3 +50,16 @@ while $i == 0 || field_data_type != nil do
   # let's get another pair
   $i+=2
 end
+
+# template for stored procedure with output xml
+output_header = 
+"SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[#{table_name}_2_XML]
+AS
+BEGIN"
+
+puts output_header
