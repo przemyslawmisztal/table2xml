@@ -19,6 +19,11 @@ Simple tool that makes selecting data from MSSQL table into XML a little bit eas
   - ION_TABLE_2_XML containing selection of data into XML
   - ION_XML_2_TABLE that selects data out of XML into temporary table
 
+## Known issues
+
+- Tool doesn't work with user data types
+- Tool doesn't work with computed columns
+
 ## Compatibility
 
 So far tool was tested with:
